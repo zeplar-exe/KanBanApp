@@ -1,4 +1,6 @@
-﻿namespace KanBanApp.Commands;
+﻿using KanBanApp.Projects;
+
+namespace KanBanApp.Commands;
 
 [Command("init")]
 public class Init : CommandBase

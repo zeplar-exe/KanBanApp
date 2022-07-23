@@ -1,4 +1,4 @@
-﻿namespace KanBanApp;
+﻿namespace KanBanApp.Projects;
 
 public class ProjectInterface
 {
