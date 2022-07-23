@@ -1,13 +1,13 @@
 ﻿namespace KanBanApp.Commands;
 
 [Command("open")]
-public class Open
+public class Open : CommandBase
 {
     [Argument(0, "Path")]
     public string Path { get; set; }
     
-    private void OnExecute()
+    protected override int OnExecute()
     {
-        
+        return 0;
     }
 }
