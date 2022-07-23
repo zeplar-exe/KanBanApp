@@ -8,7 +8,7 @@ public class DeInit : CommandBase
     [Option("-d|--dir <DirectoryPath>", CommandOptionType.SingleValue)]
     public string? DirectoryPath { get; set; }
 
-    protected override int OnExecute()
+    protected override int Execute()
     {
         var target = PathResolver.RelativeOrAbsoluteFilePath(DirectoryPath);
         var directory = new DirectoryInfo(target);
@@ -17,7 +17,7 @@ public class DeInit : CommandBase
         {
             WriteOutputLine($"The directory '{target}' does not exist.");
             
-            return Exit(1);
+            return 1;
         }
 
         if (directory.Name == ".kba")
@@ -26,7 +26,7 @@ public class DeInit : CommandBase
             
             WriteOutputLine($"Successfully deleted '{target}'.");
 
-            return Exit(0);
+            return 0;
         }
 
         var subDirectory = new DirectoryInfo(Path.Join(target, ProjectInterface.MetaDirectoryName));
@@ -35,11 +35,11 @@ public class DeInit : CommandBase
         {
             WriteOutputLine($"A .kba project does not exist within '{target}'.");
 
-            return Exit(1);
+            return 1;
         }
         
         subDirectory.Delete();
-
-        return Exit(0);
+        
+        return 0;
     }
 }

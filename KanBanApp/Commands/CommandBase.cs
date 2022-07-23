@@ -8,20 +8,28 @@ public abstract class CommandBase
     [Option("--exit-code", CommandOptionType.NoValue)]
     public bool ExitCode { get; set; }
 
-    protected abstract int OnExecute();
-
-    protected int Exit(int code)
+    protected virtual int OnExecute()
     {
+        int code;
+        
+        try
+        {
+            code = Execute();
+        }
+        catch (Exception e)
+        {
+            code = e.HResult;
+            
+            WriteOutput(e.Message);
+        }
+        
         if (ExitCode)
             WriteOutputLine(code.ToString());
-        
+
         return code;
     }
-
-    protected void WriteException(Exception exception)
-    {
-        WriteOutputLine(exception.Message);
-    }
+    
+    protected abstract int Execute();
 
     protected void WriteOutputLine(string output)
     {
