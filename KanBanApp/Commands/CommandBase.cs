@@ -29,7 +29,7 @@ public abstract class CommandBase
         }
         
         if (ExitCode)
-            WriteOutputLine(code.ToString());
+            ForceWriteOutputLine(code.ToString());
 
         return code;
     }
@@ -55,11 +55,21 @@ public abstract class CommandBase
         WriteOutput(output + Environment.NewLine);
     }
     
+    protected void ForceWriteOutputLine(string output)
+    {
+        ForceWriteOutput(output + Environment.NewLine);
+    }
+    
     protected void WriteOutput(string output)
     {
         if (Quiet)
             return;
         
+        Console.Write(output);
+    }
+    
+    protected void ForceWriteOutput(string output)
+    {
         Console.Write(output);
     }
 }
