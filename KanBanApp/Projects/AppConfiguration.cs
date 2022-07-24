@@ -25,7 +25,7 @@ public class AppConfiguration
     public void WriteXml(Stream stream)
     {
         if (!stream.CanWrite)
-            throw new ArgumentException("Stream write is denied. Configuration deserialization aborted.");
+            throw new ArgumentException("Stream write is denied. Configuration serialization aborted.");
         
         var serializer = new ConfigurationContainer().Create();
         var result = serializer.Serialize(

@@ -9,7 +9,7 @@ public class SessionInfo
     public static SessionInfo FromXml(Stream stream)
     {
         if (!stream.CanRead)
-            throw new ArgumentException("Stream read is denied. Configuration deserialization aborted.");
+            throw new ArgumentException("Stream read is denied. Session deserialization aborted.");
 
         var document = XDocument.Load(stream);
         var info = new SessionInfo();
@@ -26,6 +26,9 @@ public class SessionInfo
 
     public void WriteXml(Stream stream)
     {
+        if (!stream.CanWrite)
+            throw new ArgumentException("Stream write is denied. Session serialization aborted.");
+
         var document = new XDocument(new XElement("root"));
         
         document.Root.Add(new XElement("openPath", OpenPath));
