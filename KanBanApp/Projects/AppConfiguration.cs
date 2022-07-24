@@ -1,23 +1,28 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using System.Xml;
-using ExtendedXmlSerializer;
-using ExtendedXmlSerializer.Configuration;
+using System.Xml.Serialization;
+using KanBanApp.Common;
 
 namespace KanBanApp.Projects;
 
+[XmlRoot("root")]
 public class AppConfiguration
 {
     public bool AutoCreatePathParts { get; set; }
+    
+    public StringDictionary Custom { get; set; }
 
-    public Dictionary<string, string> Custom { get; set; }
+    public AppConfiguration()
+    {
+        Custom = new StringDictionary();
+    }
 
     public static AppConfiguration FromXml(Stream stream)
     {
         if (!stream.CanRead)
             throw new ArgumentException("Stream read is denied. Configuration deserialization aborted.");
         
-        var serializer = new ConfigurationContainer().Create();
-        var result = serializer.Deserialize<AppConfiguration>(stream);
+        var serializer = new XmlSerializer(typeof(AppConfiguration));
+        var result = serializer.Deserialize(stream) as AppConfiguration ?? new AppConfiguration();
 
         return result;
     }
@@ -27,14 +32,8 @@ public class AppConfiguration
         if (!stream.CanWrite)
             throw new ArgumentException("Stream write is denied. Configuration serialization aborted.");
         
-        var serializer = new ConfigurationContainer().Create();
-        var result = serializer.Serialize(
-            new XmlWriterSettings { Indent = true },
-            this);
-
-        using var writer = new StreamWriter(stream);
-        
-        writer.Write(result);
+        var serializer = new XmlSerializer(typeof(AppConfiguration));
+        serializer.Serialize(stream, this);
     }
 
     public bool TrySet(string config, string value)
