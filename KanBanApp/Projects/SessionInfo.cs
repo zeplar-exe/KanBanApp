@@ -17,7 +17,7 @@ public class SessionInfo
         if (document.Root == null)
             return info;
         
-        var path = document.Root.Element("openPath")?.Value ?? "";
+        var path = document.Root.Element("OpenPath")?.Value ?? "";
 
         info.OpenPath = ObjectPath.TryParse(path, out var openPath) ? openPath : new ObjectPath();
         
@@ -29,9 +29,10 @@ public class SessionInfo
         if (!stream.CanWrite)
             throw new ArgumentException("Stream write is denied. Session serialization aborted.");
 
-        var document = new XDocument(new XElement("root"));
+        var root = new XElement("root");
+        var document = new XDocument(root);
         
-        document.Root.Add(new XElement("openPath", OpenPath));
+        root.Add(new XElement("OpenPath", OpenPath));
         
         document.Save(stream);
     }

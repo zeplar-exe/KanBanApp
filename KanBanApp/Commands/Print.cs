@@ -38,9 +38,19 @@ public class Print : CommandBase
         var split = PrintTarget.Split('.');
         var arraySwitch = new ArraySwitch<string>();
 
-        arraySwitch.Register("project", "openPath").As(() =>
+        arraySwitch.Register("session", "OpenPath").As(() =>
         {
             WriteOutputLine(project.Session.OpenPath.ToString());
+        });
+
+        arraySwitch.Register("config", "xml").As(() =>
+        {
+            var stream = new MemoryStream();
+            project.Configuration.WriteXml(stream);
+
+            using var reader = new StreamReader(stream);
+            
+            WriteOutputLine(reader.ReadToEnd());
         });
 
         if (arraySwitch.Try(split))

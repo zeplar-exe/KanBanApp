@@ -1,6 +1,6 @@
 ﻿namespace KanBanApp.Common;
 
-public class ArraySwitch<T>
+internal class ArraySwitch<T>
 {
     private List<ArraySwitchRegister> Registers { get; }
 
