@@ -6,8 +6,12 @@ public class SessionInfo
 {
     public ObjectPath OpenPath { get; set; }
 
-    public static SessionInfo FromXml(XDocument document)
+    public static SessionInfo FromXml(Stream stream)
     {
+        if (!stream.CanRead)
+            throw new ArgumentException("Stream read is denied. Configuration deserialization aborted.");
+
+        var document = XDocument.Load(stream);
         var info = new SessionInfo();
 
         if (document.Root == null)
@@ -20,8 +24,12 @@ public class SessionInfo
         return info;
     }
 
-    public void WriteXml(XElement root)
+    public void WriteXml(Stream stream)
     {
-        root.Add(new XElement("openPath", OpenPath));
+        var document = new XDocument(new XElement("root"));
+        
+        document.Root.Add(new XElement("openPath", OpenPath));
+        
+        document.Save(stream);
     }
 }

@@ -1,5 +1,4 @@
-﻿using System.Xml;
-using System.Xml.Linq;
+﻿using System.Xml.Linq;
 
 namespace KanBanApp.Projects;
 
@@ -10,12 +9,14 @@ public class ProjectInterface
     private DirectoryInfo MetaDirectory { get; }
     
     public SessionInfo Session { get; set; }
+    public AppConfiguration Configuration { get; set; }
     
     public ProjectInterface(string directory)
     {
         MetaDirectory = new DirectoryInfo(Path.Join(directory, MetaDirectoryName));
 
         Session = new SessionInfo();
+        Configuration = new AppConfiguration();
     }
 
     public static bool ExistsIn(string directory)
@@ -26,15 +27,14 @@ public class ProjectInterface
     public void Update()
     {
         if (!MetaDirectory.Exists)
-            return;
+            throw new InvalidOperationException(
+                $"A kba directory does not exist within '{MetaDirectory.Parent?.FullName}'. Initialization aborted.");
+
+        using var sessionStream = OpenReadStream("session.xml");
+        Session = SessionInfo.FromXml(sessionStream);
         
-        var sessionFile = Path.Join(MetaDirectory.FullName, "session.xml");
-        EnsureFile(sessionFile);
-
-        using var stream = File.OpenRead(sessionFile);
-        var file = XDocument.Load(stream);
-
-        Session = SessionInfo.FromXml(file);
+        using var configStream = OpenReadStream("config.xml");
+        Configuration = AppConfiguration.FromXml(configStream);
     }
 
     public void Write()
@@ -44,13 +44,25 @@ public class ProjectInterface
         
         MetaDirectory.Create();
         MetaDirectory.Attributes |= FileAttributes.Hidden;
+        
+        using var sessionStream = OpenWriteStream("session.xml");
+        Session.WriteXml(sessionStream);
 
-        var sessionDocument = new XDocument(new XElement("root"));
-        var sessionFile = Path.Join(MetaDirectory.FullName, "session.xml");
-        
-        Session.WriteXml(sessionDocument.Root);
-        
-        sessionDocument.Save(sessionFile);
+        using var configStream = OpenWriteStream("config.xml");
+        Configuration.WriteXml(configStream);
+    }
+    
+    private Stream OpenReadStream(string name)
+    {
+        var file = Path.Join(MetaDirectory.FullName, name);
+        EnsureFile(file);
+
+        return File.OpenRead(file);
+    }
+
+    private Stream OpenWriteStream(string name)
+    {
+        return File.OpenWrite(Path.Join(MetaDirectory.FullName, name));
     }
 
     private void EnsureFile(string path)
