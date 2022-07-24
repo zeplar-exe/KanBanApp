@@ -1,4 +1,6 @@
-﻿namespace KanBanApp.Commands;
+﻿using KanBanApp.Projects;
+
+namespace KanBanApp.Commands;
 
 public abstract class CommandBase
 {
@@ -7,6 +9,9 @@ public abstract class CommandBase
     
     [Option("--exit-code", CommandOptionType.NoValue)]
     public bool ExitCode { get; set; }
+    
+    [Option("-v|--verbose", CommandOptionType.NoValue)]
+    public bool Verbose { get; set; }
 
     protected virtual int OnExecute()
     {
@@ -20,7 +25,7 @@ public abstract class CommandBase
         {
             code = e.HResult;
             
-            WriteOutput(e.Message);
+            WriteOutputLine(Verbose ? e.ToString() : e.Message);
         }
         
         if (ExitCode)
@@ -30,6 +35,20 @@ public abstract class CommandBase
     }
     
     protected abstract int Execute();
+
+    protected bool TestProjectExists(out ProjectInterface project)
+    {
+        project = new ProjectInterface(Directory.GetCurrentDirectory());
+        
+        if (!ProjectInterface.ExistsIn(Directory.GetCurrentDirectory()))
+        {
+            WriteOutputLine($"A kba project does not exist in '{Directory.GetCurrentDirectory()}'.");
+        }
+        
+        project.Update();
+
+        return true;
+    }
 
     protected void WriteOutputLine(string output)
     {

@@ -3,7 +3,7 @@
 namespace KanBanApp;
 
 [Command("kba")]
-[Subcommand(typeof(Init), typeof(DeInit), typeof(Open))]
+[Subcommand(typeof(Init), typeof(DeInit), typeof(Open), typeof(Print))]
 public class Entry
 {
     private void OnExecute()
