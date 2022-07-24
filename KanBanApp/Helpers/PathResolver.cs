@@ -1,4 +1,4 @@
-﻿namespace KanBanApp;
+﻿namespace KanBanApp.Helpers;
 
 public static class PathResolver
 {
