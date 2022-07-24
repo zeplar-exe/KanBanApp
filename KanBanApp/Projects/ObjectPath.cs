@@ -2,19 +2,8 @@
 
 namespace KanBanApp.Projects;
 
-public readonly struct ObjectPath
+public readonly record struct ObjectPath(string Board = "", string List = "", string Card = "")
 {
-    public string Board { get; }
-    public string List { get; }
-    public string Card { get; }
-    
-    public ObjectPath(string board = "", string list = "", string card = "")
-    {
-        Board = board;
-        List = list;
-        Card = card;
-    }
-
     public static bool TryParse(string path, out ObjectPath objectPath)
     {
         objectPath = default;
@@ -31,6 +20,10 @@ public readonly struct ObjectPath
 
         return true;
     }
+
+    public ObjectPath AsBoard() => new(Board);
+    public ObjectPath AsList() => new(Board, List);
+    public ObjectPath AsCard() => new(Board, List, Card);
 
     public override int GetHashCode()
     {
