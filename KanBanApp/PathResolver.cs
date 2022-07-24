@@ -4,7 +4,7 @@ public static class PathResolver
 {
     public static string RelativeOrAbsoluteFilePath(string? path)
     {
-        if (!string.IsNullOrEmpty(path))
+        if (!string.IsNullOrWhiteSpace(path))
         {
             if (Path.IsPathRooted(path) || Path.IsPathFullyQualified(path))
             {
