@@ -1,4 +1,5 @@
 ﻿using System.Xml.Linq;
+using KanBanApp.Extensions;
 
 namespace KanBanApp.Projects;
 
@@ -8,8 +9,7 @@ public class SessionInfo
 
     public static SessionInfo FromXml(Stream stream)
     {
-        if (!stream.CanRead)
-            throw new ArgumentException("Stream read is denied. Session deserialization aborted.");
+        stream.AssertCanRead("Session deserialization aborted.");
 
         var document = XDocument.Load(stream);
         var info = new SessionInfo();
@@ -26,8 +26,7 @@ public class SessionInfo
 
     public void WriteXml(Stream stream)
     {
-        if (!stream.CanWrite)
-            throw new ArgumentException("Stream write is denied. Session serialization aborted.");
+        stream.AssertCanWrite("Session serialization aborted.");
 
         var root = new XElement("root");
         var document = new XDocument(root);

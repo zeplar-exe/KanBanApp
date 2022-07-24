@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Xml.Serialization;
 using KanBanApp.Common;
+using KanBanApp.Extensions;
 
 namespace KanBanApp.Projects;
 
@@ -18,8 +19,7 @@ public class AppConfiguration
 
     public static AppConfiguration FromXml(Stream stream)
     {
-        if (!stream.CanRead)
-            throw new ArgumentException("Stream read is denied. Configuration deserialization aborted.");
+        stream.AssertCanRead("Configuration deserialization aborted.");
         
         var serializer = new XmlSerializer(typeof(AppConfiguration));
         var result = serializer.Deserialize(stream) as AppConfiguration ?? new AppConfiguration();
@@ -29,8 +29,7 @@ public class AppConfiguration
 
     public void WriteXml(Stream stream)
     {
-        if (!stream.CanWrite)
-            throw new ArgumentException("Stream write is denied. Configuration serialization aborted.");
+        stream.AssertCanWrite("Configuration serialization aborted.");
         
         var serializer = new XmlSerializer(typeof(AppConfiguration));
         serializer.Serialize(stream, this);
