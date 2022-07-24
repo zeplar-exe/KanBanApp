@@ -30,9 +30,12 @@ public class AppConfiguration
     public void WriteXml(Stream stream)
     {
         stream.AssertCanWrite("Configuration serialization aborted.");
+     
+        var ns = new XmlSerializerNamespaces();
+        ns.Add("", "");
         
         var serializer = new XmlSerializer(typeof(AppConfiguration));
-        serializer.Serialize(stream, this);
+        serializer.Serialize(stream, this, ns);
     }
 
     public bool TrySet(string config, string value)
