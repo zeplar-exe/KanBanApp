@@ -17,4 +17,9 @@ internal static class StreamExtensions
         if (!stream.CanWrite)
             throw new ArgumentException($"Stream write is denied.{appendMessage}");
     }
+
+    public static bool AtEnd(this Stream stream)
+    {
+        return stream.Position == stream.Length;
+    }
 }

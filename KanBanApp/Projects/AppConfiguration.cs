@@ -17,7 +17,7 @@ public class AppConfiguration
         Custom = new StringDictionary();
     }
 
-    public static AppConfiguration FromXml(Stream stream)
+    public static AppConfiguration DeserializeFromXml(Stream stream)
     {
         stream.AssertCanRead("Configuration deserialization aborted.");
         
