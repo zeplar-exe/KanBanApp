@@ -24,9 +24,9 @@ public class Add : CommandBase
             return 1;
         }
 
-        if (string.IsNullOrEmpty(path.ToString()))
+        if (path.IsRoot())
         {
-            WriteOutputLine("Cannot add a rooted path.");
+            WriteOutputLine("Cannot add a root path.");
 
             return 1;
         }

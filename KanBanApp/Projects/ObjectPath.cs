@@ -34,7 +34,14 @@ public readonly record struct ObjectPath(string Board = "", string List = "", st
     {
         var builder = new StringBuilder();
 
-        builder.Append(Board);
+        if (string.IsNullOrEmpty(Board))
+        {
+            builder.Append('/');
+        }
+        else
+        {
+            builder.Append(Board);
+        }
 
         if (!string.IsNullOrWhiteSpace(List))
         {
