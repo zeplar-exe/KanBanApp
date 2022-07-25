@@ -26,10 +26,14 @@ public class StringDictionary : Dictionary<string, string>, IXmlSerializable
         
         while (reader.NodeType != XmlNodeType.EndElement)
         {
+            if (reader.NodeType != XmlNodeType.Element)
+                continue;
+        
+            var key = reader.Name;
+            
             reader.ReadStartElement();
             
-            var key = reader.Name;
-            var value = reader.Value;
+            var value = reader.ReadContentAsString();
             
             reader.ReadEndElement();
             
@@ -47,7 +51,7 @@ public class StringDictionary : Dictionary<string, string>, IXmlSerializable
         {
             writer.WriteStartElement(pair.Key);
             writer.WriteValue(pair.Value);
-            writer.WriteEndAttribute();
+            writer.WriteEndElement();
         }
     }
 }

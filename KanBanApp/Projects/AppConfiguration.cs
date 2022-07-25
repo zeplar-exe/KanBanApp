@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
 using System.Xml.Serialization;
 using KanBanApp.Common;
 using KanBanApp.Extensions;
@@ -8,6 +9,7 @@ namespace KanBanApp.Projects;
 [XmlRoot("root")]
 public class AppConfiguration
 {
+    [ConfigurationProperty]
     public bool AutoCreatePathParts { get; set; }
     
     public StringDictionary Custom { get; set; }
@@ -40,7 +42,10 @@ public class AppConfiguration
 
     public bool TrySet(string config, string value)
     {
-        var property = GetType().GetProperty(config);
+        const StringComparison comparison = StringComparison.InvariantCultureIgnoreCase;
+        
+        var property = EnumerateProperties()
+            .FirstOrDefault(f => f.Name.Equals(config, comparison));
 
         if (property == null)
             return false;
@@ -51,7 +56,11 @@ public class AppConfiguration
         property.SetValue(this, converted);
 
         return true;
+    }
 
+    public IEnumerable<PropertyInfo> EnumerateProperties()
+    {
+        return GetType().GetProperties().Where(p => p.GetCustomAttribute<ConfigurationProperty>() != null);
     }
 
     private bool TryConvert(string input, Type targetType, [NotNullWhen(true)] out object? converted)
