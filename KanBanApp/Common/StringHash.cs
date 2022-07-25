@@ -25,6 +25,7 @@ public class StringHash
 
     public override string ToString()
     {
-        return Convert.ToHexString(Bytes);
+        return "a" + Convert.ToHexString(Bytes);
+        // Ensure valid file system name
     }
 }

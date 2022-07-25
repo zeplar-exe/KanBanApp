@@ -6,12 +6,14 @@ namespace KanBanApp.Projects.Objects;
 
 public abstract class DescribedObject
 {
+    public string Id { get; set; }
     public string Name { get; set; }
     public string Description { get; set; }
     public StringDictionary Fields { get; }
 
     public DescribedObject()
     {
+        Id = string.Empty;
         Name = string.Empty;
         Description = string.Empty;
         Fields = new StringDictionary();
@@ -36,6 +38,7 @@ public abstract class DescribedObject
 
     public void FromXml(XElement element)
     {
+        Id = element.Name.ToString();
         Name = element.Element("Name")?.Value ?? string.Empty;
         Description = element.Element("Description")?.Value ?? string.Empty;
 

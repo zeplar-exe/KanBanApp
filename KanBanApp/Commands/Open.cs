@@ -12,8 +12,7 @@ public class Open : CommandBase
     
     protected override int Execute()
     {
-        if (!TestProjectExists(out var project))
-            return 1;
+        AssertProjectExists(out var project);
 
         if (!ObjectPath.TryParse(Path, out var openPath))
         {

@@ -32,8 +32,7 @@ public class Print : CommandBase
         if (string.IsNullOrWhiteSpace(PrintTarget))
             return 1;
         
-        if (!TestProjectExists(out var project))
-            return 1;
+        AssertProjectExists(out var project);
 
         var split = PrintTarget.Split('.');
         var arraySwitch = new ArraySwitch<string>();

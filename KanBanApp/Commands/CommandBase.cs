@@ -36,18 +36,16 @@ public abstract class CommandBase
     
     protected abstract int Execute();
 
-    protected bool TestProjectExists(out ProjectInterface project)
+    protected void AssertProjectExists(out ProjectInterface project)
     {
         project = new ProjectInterface(Directory.GetCurrentDirectory());
         
         if (!ProjectInterface.ExistsIn(Directory.GetCurrentDirectory()))
         {
-            WriteOutputLine($"A kba project does not exist in '{Directory.GetCurrentDirectory()}'.");
+            throw new ProjectMissingException(Directory.GetCurrentDirectory());
         }
         
         project.Update();
-
-        return true;
     }
 
     protected void WriteOutputLine(string output)
@@ -71,5 +69,13 @@ public abstract class CommandBase
     protected void ForceWriteOutput(string output)
     {
         Console.Write(output);
+    }
+}
+
+public class ProjectMissingException : Exception
+{
+    public ProjectMissingException(string directory) : base($"A kba project does not exist in '{directory}'.")
+    {
+        HResult = 1;
     }
 }
