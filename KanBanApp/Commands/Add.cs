@@ -56,7 +56,7 @@ public class Add : CommandBase
         var boardHash = StringHash.Hash(path.Board).ToString();
         var existingBoard = project.Boards.FirstOrDefault(b => b.Id == boardHash);
 
-        if (existingBoard != null)
+        if (path.IsBoard() &&existingBoard != null)
         {
             if (Force)
             {
@@ -83,7 +83,7 @@ public class Add : CommandBase
         var listHash = StringHash.Hash(path.List).ToString();
         var existingList = board.Lists.FirstOrDefault(l => l.Id == listHash);
 
-        if (existingList != null)
+        if (path.IsList() && existingList != null)
         {
             if (Force)
             {
@@ -116,7 +116,7 @@ public class Add : CommandBase
         var cardHash = StringHash.Hash(path.Card).ToString();
         var existingCard = list.Cards.FirstOrDefault(l => l.Id == cardHash);
 
-        if (existingCard != null)
+        if (path.IsCard() &&existingCard != null)
         {
             if (Force)
             {

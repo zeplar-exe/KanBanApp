@@ -21,6 +21,11 @@ public readonly record struct ObjectPath(string Board = "", string List = "", st
         return true;
     }
 
+    public bool IsRoot() => Board == "" && List == "" && Card == "";
+    public bool IsBoard() => Board != "" && List == "" && Card == "";
+    public bool IsList() => Board != "" && List != null && Card == "";
+    public bool IsCard() => Board != "" && List != "" && Card != "";
+
     public ObjectPath AsBoard() => new(Board);
     public ObjectPath AsList() => new(Board, List);
     public ObjectPath AsCard() => new(Board, List, Card);
