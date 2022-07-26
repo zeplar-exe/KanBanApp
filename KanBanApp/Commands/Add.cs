@@ -38,7 +38,7 @@ public class Add : CommandBase
 
         if (!string.IsNullOrEmpty(path.List))
         {
-            if (!TryAddList(path, board, out _))
+            if (!TryAddList(path, project, board))
                 return 1;
         }
 
@@ -56,81 +56,110 @@ public class Add : CommandBase
         var boardHash = StringHash.Hash(path.Board).ToString();
         var existingBoard = project.Boards.FirstOrDefault(b => b.Id == boardHash);
 
-        if (path.IsBoard() &&existingBoard != null)
+        if (existingBoard != null)
         {
-            if (Force)
+            if (path.IsBoard())
             {
-                project.Boards.Remove(existingBoard);
-            }
-            else
-            {
-                WriteOutputLine($"The path '{path.ToString()}' already exists. Use --force to overwrite.");
+                if (Force)
+                {
+                    project.Boards.Remove(existingBoard);
+                }
+                else
+                {
+                    WriteOutputLine($"The path '{path.ToString()}' already exists. Use --force to overwrite.");
 
-                return false;
+                    return false;
+                }
             }
         }
-        
+        else
+        {
+            if (!path.IsBoard())
+            {
+                if (!project.Configuration.AutoCreatePathParts)
+                {
+                    WriteOutputLine($"The board '{path.Board}' does not exist.");
+
+                    return false;
+                }
+            }
+        }
+
         board = new ProjectBoard { Name = path.Board };
         project.Boards.Add(board);
 
         return true;
     }
 
-    private bool TryAddList(ObjectPath path, ProjectBoard board, [NotNullWhen(true)] out BoardList? list)
+    private bool TryAddList(ObjectPath path, ProjectInterface project, ProjectBoard board)
     {
-        list = null;
-        
         var listHash = StringHash.Hash(path.List).ToString();
         var existingList = board.Lists.FirstOrDefault(l => l.Id == listHash);
 
-        if (path.IsList() && existingList != null)
+        if (existingList != null)
         {
-            if (Force)
+            if (path.IsList())
             {
-                board.Lists.Remove(existingList);
-            }
-            else
-            {
-                WriteOutputLine($"The path '{path.ToString()}' already exists. Use --force to overwrite.");
+                if (Force)
+                {
+                    board.Lists.Remove(existingList);
+                }
+                else
+                {
+                    WriteOutputLine($"The list '{path.ToString()}' already exists. Use --force to overwrite.");
 
-                return false;
+                    return false;
+                }
             }
         }
-            
-        list = new BoardList { Name = path.List };
+        else
+        {
+            if (!path.IsList())
+            {
+                if (!project.Configuration.AutoCreatePathParts)
+                {
+                    WriteOutputLine($"The list '{path.List}' does not exist.");
+
+                    return false;
+                }
+            }
+        }
+
+        var list = new BoardList { Name = path.List };
         board.Lists.Add(list);
         
         if (!string.IsNullOrEmpty(path.Card))
         {
-            if (!TryAddCard(path, list, out _))
+            if (!TryAddCard(path, list))
                 return false;
         }
 
         return true;
     }
 
-    private bool TryAddCard(ObjectPath path, BoardList list, [NotNullWhen(true)] out ListCard? card)
+    private bool TryAddCard(ObjectPath path, BoardList list)
     {
-        card = null;
-        
         var cardHash = StringHash.Hash(path.Card).ToString();
         var existingCard = list.Cards.FirstOrDefault(l => l.Id == cardHash);
 
-        if (path.IsCard() &&existingCard != null)
+        if (existingCard != null)
         {
-            if (Force)
+            if (path.IsCard())
             {
-                list.Cards.Remove(existingCard);
-            }
-            else
-            {
-                WriteOutputLine($"The path '{path.ToString()}' already exists. Use --force to overwrite.");
+                if (Force)
+                {
+                    list.Cards.Remove(existingCard);
+                }
+                else
+                {
+                    WriteOutputLine($"The card '{path.ToString()}' already exists. Use --force to overwrite.");
 
-                return false;
+                    return false;
+                }
             }
         }
-            
-        card = new ListCard { Name = path.Card };
+
+        var card = new ListCard { Name = path.Card };
         list.Cards.Add(card);
 
         return true;
