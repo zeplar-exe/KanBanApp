@@ -40,19 +40,19 @@ public class AppConfiguration
         serializer.Serialize(stream, this, ns);
     }
 
-    public bool TryGet(string config, [NotNullWhen(true)] out object? value)
+    public bool TryGet(string config, out object? value)
     {
         const StringComparison comparison = StringComparison.InvariantCultureIgnoreCase;
 
         value = null;
         
         var property = EnumerateProperties()
-            .FirstOrDefault(f => f.Name.Equals(config, comparison));
+            .FirstOrDefault(f => f.ResolveName().Equals(config, comparison));
 
         if (property == null)
             return false;
 
-        value = property.GetValue(this);
+        value = property.PropertyInfo.GetValue(this);
 
         return true;
     }
@@ -62,22 +62,24 @@ public class AppConfiguration
         const StringComparison comparison = StringComparison.InvariantCultureIgnoreCase;
         
         var property = EnumerateProperties()
-            .FirstOrDefault(f => f.Name.Equals(config, comparison));
+            .FirstOrDefault(f => f.ResolveName().Equals(config, comparison));
 
         if (property == null)
             return false;
 
-        if (!TryConvert(value, property.PropertyType, out var converted))
+        if (!TryConvert(value, property.PropertyInfo.PropertyType, out var converted))
             return false;
         
-        property.SetValue(this, converted);
+        property.PropertyInfo.SetValue(this, converted);
 
         return true;
     }
 
-    public IEnumerable<PropertyInfo> EnumerateProperties()
+    public IEnumerable<PropertyItem> EnumerateProperties()
     {
-        return GetType().GetProperties().Where(p => p.GetCustomAttribute<ConfigurationProperty>() != null);
+        return GetType().GetProperties()
+            .Where(p => p.GetCustomAttribute<ConfigurationProperty>() != null)
+            .Select(p => new PropertyItem(p, p.GetCustomAttribute<ConfigurationProperty>()!));
     }
 
     private bool TryConvert(string input, Type targetType, [NotNullWhen(true)] out object? converted)
@@ -106,5 +108,13 @@ public class AppConfiguration
         }
 
         return result;
+    }
+
+    public record PropertyItem(PropertyInfo PropertyInfo, ConfigurationProperty Attribute)
+    {
+        public string ResolveName()
+        {
+            return Attribute.Name ?? PropertyInfo.Name;
+        }
     }
 }

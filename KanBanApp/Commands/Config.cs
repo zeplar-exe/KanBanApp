@@ -28,7 +28,9 @@ public class Config : CommandBase
         {
             foreach (var property in project.Configuration.EnumerateProperties())
             {
-                WriteOutputLine($"{property.Name}={property.GetValue(project.Configuration)}");
+                var value = property.PropertyInfo.GetValue(project.Configuration);
+                
+                WriteOutputLine($"{property.ResolveName()}={value}");
             }
 
             foreach (var custom in project.Configuration.Custom)
