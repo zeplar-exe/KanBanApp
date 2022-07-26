@@ -40,6 +40,23 @@ public class AppConfiguration
         serializer.Serialize(stream, this, ns);
     }
 
+    public bool TryGet(string config, [NotNullWhen(true)] out object? value)
+    {
+        const StringComparison comparison = StringComparison.InvariantCultureIgnoreCase;
+
+        value = null;
+        
+        var property = EnumerateProperties()
+            .FirstOrDefault(f => f.Name.Equals(config, comparison));
+
+        if (property == null)
+            return false;
+
+        value = property.GetValue(this);
+
+        return true;
+    }
+
     public bool TrySet(string config, string value)
     {
         const StringComparison comparison = StringComparison.InvariantCultureIgnoreCase;
