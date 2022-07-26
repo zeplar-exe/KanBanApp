@@ -6,7 +6,7 @@ namespace KanBanApp;
 [Subcommand(
     typeof(Init), typeof(DeInit),
     typeof(Open), typeof(Print), typeof(Config),
-    typeof(Add))]
+    typeof(Add), typeof(Edit))]
 public class Entry
 {
     private void OnExecute()
