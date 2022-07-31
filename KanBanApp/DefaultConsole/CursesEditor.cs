@@ -20,6 +20,8 @@ public class CursesEditor
     {
         try
         {
+            Console.Clear();
+            
             while (!Exited)
             {
                 Render();

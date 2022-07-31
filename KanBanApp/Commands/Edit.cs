@@ -28,6 +28,7 @@ public class Edit : CommandBase
             var height = (short)Console.BufferHeight;
             
             reservedWriter.Write(ConsoleReader.ReadFromBuffer(0, 0, width, height));
+            reservedWriter.Flush();
         }
 
         editor.Run();
